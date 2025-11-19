@@ -26,7 +26,7 @@ use Tuleap\Request\CSRFSynchronizerTokenInterface;
 
 final readonly class TriggersPresenter
 {
-    public function __construct(public int $tracker_id, public CSRFSynchronizerTokenInterface $csrf_token)
+    public function __construct(public int $tracker_id, public CSRFSynchronizerTokenInterface $csrf_token, public string $json_encoded_existing)
     {
     }
 }

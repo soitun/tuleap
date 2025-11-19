@@ -21,6 +21,10 @@
     display: flex;
     gap: var(--tlp-small-spacing);
     margin: 0 0 0 20px;
+
+    &.hidden {
+        display: none;
+    }
 }
 
 .tlp-pane-section > .access-control-permission-table:last-child {
@@ -29,4 +33,9 @@
 
 #add-fine-grained-permission-template {
     display: none;
+}
+
+.remove-fine-grained-permission-popover {
+    text-align: initial;
+    white-space: initial;
 }
