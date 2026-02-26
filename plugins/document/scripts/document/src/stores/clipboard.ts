@@ -44,6 +44,8 @@ import {
 } from "../api/move-rest-querier";
 import { useLocalStorage } from "@vueuse/core";
 import type { Store } from "vuex";
+import { Fault } from "@tuleap/fault";
+import { transformRestErrorToFault } from "../helpers/rest-error-helper";
 
 export interface PastePayload {
     destination_folder: Folder;
@@ -103,7 +105,14 @@ export function useClipboardStore(
                     await store.dispatch("loadFolder", payload.root_folder_id, { root: true });
                 } catch (exception) {
                     this.pastingHasFailed();
-                    await store.dispatch("error/handleGlobalModalError", exception, { root: true });
+                    if (exception instanceof Error) {
+                        emitter.emit(
+                            "global-modal-error",
+                            await transformRestErrorToFault(exception),
+                        );
+                    } else {
+                        emitter.emit("global-modal-error", Fault.fromMessage(""));
+                    }
                 }
 
                 return Promise.resolve();
