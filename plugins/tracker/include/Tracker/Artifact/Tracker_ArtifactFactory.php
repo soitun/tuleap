@@ -219,14 +219,21 @@ class Tracker_ArtifactFactory implements RetrieveArtifact, RetrieveViewableArtif
             return $artifacts;
         }
 
-        $rows = $this->getDao()->searchByIds($not_cached_artifact_ids);
-        foreach ($rows as $row) {
-            $artifact                            = $this->getInstanceFromRow($row);
-            $this->artifacts[$artifact->getId()] = $artifact;
-            $artifacts[]                         = $artifact;
+        $this->warmUpArtifactCacheWithIds($not_cached_artifact_ids);
+        foreach ($not_cached_artifact_ids as $id) {
+            if (isset($this->artifacts[$id])) {
+                $artifacts[] = $this->artifacts[$id];
+            }
         }
 
         return $artifacts;
+    }
+
+    public function warmUpArtifactCacheWithIds(array $artifact_ids): void
+    {
+        foreach ($this->getDao()->searchByIds($artifact_ids) as $row) {
+            $this->artifacts[(int) $row['id']] = $this->getInstanceFromRow($row);
+        }
     }
 
     /**
