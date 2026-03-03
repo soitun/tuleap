@@ -29,8 +29,8 @@ class AgileDashboardMovableFieldsCollectorTest extends \Tuleap\Test\PHPUnit\Test
     public function testItMarksTheFieldAsFullyMigrateableWhenBothSourceAndDestinationAreBurnupFields(): void
     {
         $event = new CollectMovableExternalFieldEvent(
-            BurnupTestBuilder::aBurnupField(),
-            BurnupTestBuilder::aBurnupField(),
+            BurnupTestBuilder::aBurnupField(100)->build(),
+            BurnupTestBuilder::aBurnupField(200)->build(),
         );
 
         AgileDashboardMovableFieldsCollector::collectMovableFields($event);

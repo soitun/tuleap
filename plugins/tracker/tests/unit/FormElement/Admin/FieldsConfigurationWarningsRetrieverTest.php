@@ -26,10 +26,12 @@ use PFUser;
 use PHPUnit\Framework\Attributes\DisableReturnValueGenerationForTestDoubles;
 use Tuleap\Test\Builders\UserTestBuilder;
 use Tuleap\Test\PHPUnit\TestCase;
+use Tuleap\Test\Stubs\EventDispatcherStub;
 use Tuleap\Tracker\FormElement\ChartConfigurationWarning;
 use Tuleap\Tracker\FormElement\ChartConfigurationWarningCollection;
 use Tuleap\Tracker\FormElement\Field\Burndown\BurndownField;
 use Tuleap\Tracker\Test\Builders\Fields\BurndownFieldBuilder;
+use Tuleap\Tracker\Test\Builders\Fields\IntegerFieldBuilder;
 use Tuleap\Tracker\Test\Builders\TrackerTestBuilder;
 use Tuleap\Tracker\Test\Stub\FormElement\FetchChartConfigurationWarningsStub;
 use Tuleap\Tracker\Test\Stub\FormElement\Field\RetrieveBurndownFieldStub;
@@ -55,6 +57,7 @@ final class FieldsConfigurationWarningsRetrieverTest extends TestCase
         $retriever = new FieldsConfigurationWarningsRetriever(
             RetrieveBurndownFieldStub::withoutField(),
             FetchChartConfigurationWarningsStub::withoutWarnings(),
+            EventDispatcherStub::withIdentityCallback(),
         );
 
         self::assertCount(0, $retriever->retrieveWarnings($this->tracker, $this->user));
@@ -65,6 +68,7 @@ final class FieldsConfigurationWarningsRetrieverTest extends TestCase
         $retriever = new FieldsConfigurationWarningsRetriever(
             RetrieveBurndownFieldStub::withField($this->burndown_field),
             FetchChartConfigurationWarningsStub::withoutWarnings(),
+            EventDispatcherStub::withIdentityCallback(),
         );
 
         self::assertCount(0, $retriever->retrieveWarnings($this->tracker, $this->user));
@@ -72,17 +76,32 @@ final class FieldsConfigurationWarningsRetrieverTest extends TestCase
 
     public function testItReturnsWarningsIndexedByFieldId(): void
     {
+        $an_external_field       = IntegerFieldBuilder::anIntField(1000)->build();
+        $external_field_warnings = [
+            ChartConfigurationWarning::fromMessage('Something is not configured properly from an external point of view.'),
+        ];
+
         $warnings_collection = new ChartConfigurationWarningCollection();
         $warnings_collection->addWarning(ChartConfigurationWarning::fromMessage('Something is not configured as expected.'));
 
         $retriever = new FieldsConfigurationWarningsRetriever(
             RetrieveBurndownFieldStub::withField($this->burndown_field),
             FetchChartConfigurationWarningsStub::withWarnings($warnings_collection),
+            EventDispatcherStub::withCallback(static function (object $event) use ($an_external_field, $external_field_warnings): object {
+                if ($event instanceof CollectFieldsConfigurationWarningsEvent) {
+                    $event->addWarnings($an_external_field, $external_field_warnings);
+                }
+                return $event;
+            }),
         );
 
         $indexed_warnings = $retriever->retrieveWarnings($this->tracker, $this->user);
-        self::assertCount(1, $indexed_warnings);
+
+        self::assertCount(2, $indexed_warnings);
         self::assertArrayHasKey($this->burndown_field->getId(), $indexed_warnings);
         self::assertSame($warnings_collection->warnings, $indexed_warnings[$this->burndown_field->getId()]);
+
+        self::assertArrayHasKey($an_external_field->getId(), $indexed_warnings);
+        self::assertSame($external_field_warnings, $indexed_warnings[$an_external_field->getId()]);
     }
 }

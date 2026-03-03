@@ -86,7 +86,7 @@ final readonly class DetailsPresenterBuilder
         $has_burnup       = false;
         $burnup_label     = null;
         $burnup_presenter = null;
-        $burnup_field     = $this->field_retriever->getField($milestone->getArtifact(), $user);
+        $burnup_field     = $this->field_retriever->getField($milestone->getArtifact()->getTracker(), $user);
         if ($burnup_field) {
             $has_burnup       = true;
             $burnup_label     = $burnup_field->getLabel();

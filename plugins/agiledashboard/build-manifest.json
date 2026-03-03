@@ -12,6 +12,10 @@
         "overview": {
             "src": "scripts/overview/src",
             "po": "scripts/overview/po"
+        },
+        "tracker-admin-fields": {
+            "src": "scripts/tracker-admin-fields/src",
+            "po": "scripts/tracker-admin-fields/po"
         }
     },
     "gettext-angularjs": {

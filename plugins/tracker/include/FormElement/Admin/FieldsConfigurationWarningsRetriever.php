@@ -26,6 +26,7 @@ use Tuleap\Tracker\FormElement\BurndownChartFieldUsage;
 use Tuleap\Tracker\FormElement\ChartConfigurationWarningInterface;
 use Tuleap\Tracker\FormElement\FetchChartConfigurationWarnings;
 use Tuleap\Tracker\FormElement\Field\RetrieveBurndownField;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Tuleap\Tracker\Tracker;
 
 readonly class FieldsConfigurationWarningsRetriever
@@ -33,6 +34,7 @@ readonly class FieldsConfigurationWarningsRetriever
     public function __construct(
         private RetrieveBurndownField $retrieve_burndown_field,
         private FetchChartConfigurationWarnings $fetch_chart_configuration_warnings,
+        private EventDispatcherInterface $event_manager,
     ) {
     }
 
@@ -52,6 +54,9 @@ readonly class FieldsConfigurationWarningsRetriever
             $warnings[$burndown_field->getId()] = $burndown_warnings;
         }
 
-        return $warnings;
+        $event = new CollectFieldsConfigurationWarningsEvent($warnings, $tracker, $user);
+        $this->event_manager->dispatch($event);
+
+        return $event->warnings;
     }
 }
