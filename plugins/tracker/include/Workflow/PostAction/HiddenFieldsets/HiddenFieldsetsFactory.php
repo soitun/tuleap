@@ -25,6 +25,8 @@ namespace Tuleap\Tracker\Workflow\PostAction\HiddenFieldsets;
 use SimpleXMLElement;
 use Transition;
 use Transition_PostAction;
+use Tuleap\Option\Option;
+use Tuleap\Tracker\FormElement\Container\Fieldset\FieldsetContainer;
 use Tuleap\Tracker\FormElement\Field\TrackerField;
 use Workflow;
 
@@ -104,10 +106,9 @@ class HiddenFieldsetsFactory implements \Transition_PostActionSubFactory
         return false;
     }
 
-    #[\Override]
-    public function isFieldsetUsedInPostActions(\Tuleap\Tracker\FormElement\Container\Fieldset\FieldsetContainer $fieldset): bool
+    public function getFirstTransitionIdWhereFieldsetIsUsedInPostActions(FieldsetContainer $fieldset): Option
     {
-        return $this->hidden_fieldsets_dao->isFieldsetUsedInPostAction($fieldset->getID());
+        return $this->hidden_fieldsets_dao->searchFirstTransitionIdByFieldsetId($fieldset->getID());
     }
 
     /**

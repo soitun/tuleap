@@ -24,6 +24,7 @@ namespace Tuleap\Tracker\Workflow\PostAction;
 
 use Override;
 use Transition_PostActionFactory;
+use Tuleap\Option\Option;
 use Tuleap\Tracker\FormElement\Container\Fieldset\FieldsetContainer;
 
 class WorkflowActionUsageByFieldsetProvider implements ProvideWorkflowActionUsageByFieldset
@@ -33,8 +34,8 @@ class WorkflowActionUsageByFieldsetProvider implements ProvideWorkflowActionUsag
     }
 
     #[Override]
-    public function isFieldsetUsedInWorkflowActions(FieldsetContainer $fieldset): bool
+    public function getFirstTransitionIdWhereFieldsetIsUsedInWorkflowActions(FieldsetContainer $fieldset): Option
     {
-        return $this->post_action_factory->isFieldsetUsedInPostActions($fieldset);
+        return $this->post_action_factory->getFirstTransitionIdWhereFieldsetIsUsedInPostActions($fieldset);
     }
 }

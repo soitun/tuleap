@@ -250,6 +250,22 @@ final class Transition_PostActionFactoryTest extends \Tuleap\Test\PHPUnit\TestCa
         $this->assertTrue($this->factory->isFieldUsedInPostActions($field));
     }
 
+    public function testItReturnsTheFirstTransitionIdWhereFieldsetIsUsedInPostActions(): void
+    {
+        $expected_transition_id = 1032;
+
+        $fieldset = $this->createMock(\Tuleap\Tracker\FormElement\Container\Fieldset\FieldsetContainer::class);
+        $this->hidden_fieldset_factory
+            ->method('getFirstTransitionIdWhereFieldsetIsUsedInPostActions')
+            ->with($fieldset)
+            ->willReturn(\Tuleap\Option\Option::fromValue($expected_transition_id));
+
+        $this->assertEquals(
+            \Tuleap\Option\Option::fromValue($expected_transition_id),
+            $this->factory->getFirstTransitionIdWhereFieldsetIsUsedInPostActions($fieldset)
+        );
+    }
+
     public function testItLoadsPostActionFromAllSubFactories(): void
     {
         $this->cibuild_factory->expects($this->once())->method('loadPostActions')->with($this->transition)->willReturn([$this->post_action_1]);

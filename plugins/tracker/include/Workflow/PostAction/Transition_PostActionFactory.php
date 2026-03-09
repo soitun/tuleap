@@ -118,9 +118,9 @@ class Transition_PostActionFactory
         return $this->getSubFactories()->isFieldUsedInPostActions($field);
     }
 
-    public function isFieldsetUsedInPostActions(FieldsetContainer $field): bool
+    public function getFirstTransitionIdWhereFieldsetIsUsedInPostActions(FieldsetContainer $field): \Tuleap\Option\Option
     {
-        return $this->getSubFactories()->isFieldsetUsedInPostActions($field);
+        return $this->getHiddenFieldsetsFactory()->getFirstTransitionIdWhereFieldsetIsUsedInPostActions($field);
     }
 
     /**

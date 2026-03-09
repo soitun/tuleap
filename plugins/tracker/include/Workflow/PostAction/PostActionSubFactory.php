@@ -18,7 +18,6 @@
  * along with Tuleap. If not, see <http://www.gnu.org/licenses/>.
  */
 
-use Tuleap\Tracker\FormElement\Container\Fieldset\FieldsetContainer;
 use Tuleap\Tracker\FormElement\Field\TrackerField;
 
 /**
@@ -57,8 +56,6 @@ interface Transition_PostActionSubFactory
      * @return bool
      */
     public function isFieldUsedInPostActions(TrackerField $field);
-
-    public function isFieldsetUsedInPostActions(FieldsetContainer $fieldset): bool;
 
     /**
      * Duplicate postactions of a transition

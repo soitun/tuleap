@@ -24,6 +24,7 @@ namespace Tuleap\Tracker\Workflow\PostAction\HiddenFieldsets;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use SimpleXMLElement;
+use Tuleap\Option\Option;
 use Tuleap\Tracker\Test\Builders\Fields\List\ListStaticValueBuilder;
 
 #[\PHPUnit\Framework\Attributes\DisableReturnValueGenerationForTestDoubles]
@@ -128,23 +129,30 @@ XML;
         $this->assertCount(1, $action->getFieldsets());
     }
 
-    public function testItReturnsTrueIfThereIsFieldsetUsedInThisPostAction(): void
+    public function testItReturnsNullIfTheFieldsetIsNotUsedInThisPostAction(): void
     {
-        $this->hidden_fieldsets_dao->method('isFieldsetUsedInPostAction')->willReturn(true);
-
-        $fieldset = $this->createMock(\Tuleap\Tracker\FormElement\Container\Fieldset\FieldsetContainer::class);
-        $fieldset->method('getID')->willReturn(101);
-
-        $this->assertTrue($this->hidden_fieldsets_factory->isFieldsetUsedInPostActions($fieldset));
-    }
-
-    public function testItReturnsFalseIfThereIsNoFieldsetUsedInThisPostAction(): void
-    {
-        $this->hidden_fieldsets_dao->method('isFieldsetUsedInPostAction')->willReturn(false);
+        $this->hidden_fieldsets_dao->method('searchFirstTransitionIdByFieldsetId')->willReturn(Option::fromNullable(null));
 
         $fieldset = $this->createMock(\Tuleap\Tracker\FormElement\Container\Fieldset\FieldsetContainer::class);
         $fieldset->method('getID')->willReturn(102);
 
-        $this->assertfalse($this->hidden_fieldsets_factory->isFieldsetUsedInPostActions($fieldset));
+        $this->assertEquals(
+            Option::fromNullable(null),
+            $this->hidden_fieldsets_factory->getFirstTransitionIdWhereFieldsetIsUsedInPostActions($fieldset)
+        );
+    }
+
+    public function testItReturnsTheFirstTransitionIdOfTheFieldsetUsedInThisPostAction(): void
+    {
+        $expected_transition_id = 1052;
+        $this->hidden_fieldsets_dao->method('searchFirstTransitionIdByFieldsetId')->willReturn(Option::fromValue($expected_transition_id));
+
+        $fieldset = $this->createMock(\Tuleap\Tracker\FormElement\Container\Fieldset\FieldsetContainer::class);
+        $fieldset->method('getID')->willReturn(102);
+
+        $this->assertEquals(
+            Option::fromValue($expected_transition_id),
+            $this->hidden_fieldsets_factory->getFirstTransitionIdWhereFieldsetIsUsedInPostActions($fieldset)
+        );
     }
 }

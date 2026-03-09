@@ -54,4 +54,10 @@ final class WorkflowUrlBuilder
     {
         return self::buildUrl($tracker, Workflow::FUNC_ADMIN_TRANSITIONS);
     }
+
+    public static function buildTransitionUrlWithTransitionId(Tracker $tracker, int $transition_id): string
+    {
+        return \trackerPlugin::TRACKER_BASE_URL . Workflow::BASE_PATH . '/' . urlencode((string) $tracker->getId())
+            . Workflow::TRANSITION_PATH . '/' . urlencode((string) $transition_id);
+    }
 }
