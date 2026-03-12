@@ -68,7 +68,11 @@ const buildOptionPresenter = (value: ListFieldItem): SelectBoxOptionPresenter =>
         };
     }
 
-    return { id: String(value.id), label: value.label, is_hidden: false };
+    return {
+        id: String(value.id),
+        label: value.label,
+        is_hidden: "is_hidden" in value ? value.is_hidden : false,
+    };
 };
 
 function buildSelectBoxOptions(
