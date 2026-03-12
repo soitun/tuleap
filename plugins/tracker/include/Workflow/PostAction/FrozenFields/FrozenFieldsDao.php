@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace Tuleap\Tracker\Workflow\PostAction\FrozenFields;
 
 use Tuleap\DB\DataAccessObject;
+use Tuleap\Tracker\FormElement\Field\ArtifactLink\ArtifactLinkField;
 
 class FrozenFieldsDao extends DataAccessObject
 {
@@ -68,14 +69,17 @@ class FrozenFieldsDao extends DataAccessObject
 
     public function isAFrozenFieldPostActionUsedInTracker(int $tracker_id): bool
     {
-        $sql = 'SELECT NULL
-            FROM tracker_workflow
-            LEFT JOIN tracker_workflow_transition ON (tracker_workflow.workflow_id = tracker_workflow_transition.workflow_id)
-            LEFT JOIN plugin_tracker_workflow_postactions_frozen_fields ON (tracker_workflow_transition.transition_id = plugin_tracker_workflow_postactions_frozen_fields.transition_id)
-            WHERE tracker_workflow.tracker_id = ?
-                AND plugin_tracker_workflow_postactions_frozen_fields.id IS NOT NULL;';
+        $sql = <<<SQL
+            SELECT NULL
+            FROM tracker_workflow AS workflow
+            LEFT JOIN tracker_workflow_transition AS transition ON workflow.workflow_id = transition.workflow_id
+            LEFT JOIN plugin_tracker_workflow_postactions_frozen_fields AS action ON transition.transition_id = action.transition_id
+            LEFT JOIN plugin_tracker_workflow_postactions_frozen_fields_value AS action_field ON action.id = action_field.postaction_id
+            LEFT JOIN tracker_field AS field ON (action_field.field_id = field.id AND field.formElement_type = ?)
+            WHERE workflow.tracker_id = ? AND field.id IS NOT NULL;
+            SQL;
 
-        $result = $this->getDB()->cell($sql, $tracker_id);
+        $result = $this->getDB()->cell($sql, ArtifactLinkField::TYPE, $tracker_id);
 
         return $result !== false;
     }
