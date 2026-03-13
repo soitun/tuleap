@@ -26,6 +26,9 @@ use Tuleap\Tracker\FormElement\Field\Date\DateField;
 use Tuleap\Tracker\FormElement\Field\Float\FloatField;
 use Tuleap\Tracker\FormElement\Field\Integer\IntegerField;
 use Tuleap\Tracker\FormElement\Field\List\SelectboxField;
+use Tuleap\Tracker\Test\Builders\Fields\DateFieldBuilder;
+use Tuleap\Tracker\Test\Builders\Fields\FloatFieldBuilder;
+use Tuleap\Tracker\Test\Builders\Fields\IntegerFieldBuilder;
 use Tuleap\Tracker\Test\Builders\Fields\List\ListStaticValueBuilder;
 
 #[\PHPUnit\Framework\Attributes\DisableReturnValueGenerationForTestDoubles]
@@ -405,5 +408,27 @@ final class Transition_PostAction_FieldFactoryTest extends \Tuleap\Test\PHPUnit\
         $this->float_dao->method('countByFieldId')->with($field_id)->willReturn(0);
 
         $this->assertFalse($this->factory->isFieldUsedInPostActions($field));
+    }
+
+    public function testItReturnsTheFirstTransitionIdOfTheFieldUsedInThisPostAction(): void
+    {
+        $expected_transition_id = 1052;
+
+        $result = $this->createMock(DataAccessResult::class);
+        $result->method('getRow')->willReturn(['transition_id' => $expected_transition_id]);
+
+        $int_field = IntegerFieldBuilder::anIntField(1)->build();
+        $this->int_dao->method('searchByFieldId')->willReturn($result);
+
+        $date_field = DateFieldBuilder::aDateField(2)->build();
+        $this->date_dao->method('searchByFieldId')->willReturn($result);
+
+        $float_field = FloatFieldBuilder::aFloatField(3)->build();
+        $this->float_dao->method('searchByFieldId')->willReturn($result);
+
+
+        $this->assertEquals(\Tuleap\Option\Option::fromValue($expected_transition_id), $this->factory->getFirstTransitionIdWhereFieldIsUsedInPostActions($int_field));
+        $this->assertEquals(\Tuleap\Option\Option::fromValue($expected_transition_id), $this->factory->getFirstTransitionIdWhereFieldIsUsedInPostActions($date_field));
+        $this->assertEquals(\Tuleap\Option\Option::fromValue($expected_transition_id), $this->factory->getFirstTransitionIdWhereFieldIsUsedInPostActions($float_field));
     }
 }

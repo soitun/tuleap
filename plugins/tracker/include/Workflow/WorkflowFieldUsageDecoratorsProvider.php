@@ -145,9 +145,11 @@ readonly class WorkflowFieldUsageDecoratorsProvider
             $decorators[] = $this->getWorkflowConditionsLabelDecorator($field);
         }
 
-        if ($this->action_usage->isFieldUsedInWorkflowActions($field)) {
-            $decorators[] = $this->getWorkflowActionsLabelDecorator($field);
-        }
+        $this->action_usage
+            ->getFirstTransitionIdWhereFieldIsUsedInWorkflowActions($field)
+            ->apply(function (int $transition_id) use (&$decorators, $field): void {
+                $decorators[] = $this->getWorkflowActionsLabelDecorator($field, $transition_id);
+            });
 
         if ($this->transition_usage->isFieldUsedInWorkflowTransitions($field)) {
             $decorators[] = $this->getWorkflowTransitionsLabelDecorator($field);

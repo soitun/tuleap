@@ -18,6 +18,7 @@
  * along with Tuleap. If not, see <http://www.gnu.org/licenses/>.
  */
 
+use Tuleap\Option\Option;
 use Tuleap\Tracker\FormElement\Container\Fieldset\FieldsetContainer;
 use Tuleap\Tracker\FormElement\Field\TrackerField;
 use Tuleap\Tracker\Workflow\PostAction\ExternalPostActionSaveObjectEvent;
@@ -118,7 +119,22 @@ class Transition_PostActionFactory
         return $this->getSubFactories()->isFieldUsedInPostActions($field);
     }
 
-    public function getFirstTransitionIdWhereFieldsetIsUsedInPostActions(FieldsetContainer $field): \Tuleap\Option\Option
+    /**
+     * @return Option<int>
+     */
+    public function getFirstTransitionIdWhereFieldIsUsedInPostActions(TrackerField $field): Option
+    {
+        return $this->getFieldFactory()->getFirstTransitionIdWhereFieldIsUsedInPostActions($field)
+            ->match(
+                fn(int $transition_id) => Option::fromValue($transition_id),
+                fn() => $this->getFrozenFieldsFactory()->getFirstTransitionIdWhereFieldIsUsedInPostActions($field)
+            );
+    }
+
+    /**
+     * @return Option<int>
+     */
+    public function getFirstTransitionIdWhereFieldsetIsUsedInPostActions(FieldsetContainer $field): Option
     {
         return $this->getHiddenFieldsetsFactory()->getFirstTransitionIdWhereFieldsetIsUsedInPostActions($field);
     }

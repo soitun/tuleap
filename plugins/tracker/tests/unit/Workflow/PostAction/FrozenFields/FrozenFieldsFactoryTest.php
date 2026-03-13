@@ -24,6 +24,7 @@ namespace Tuleap\Tracker\Workflow\PostAction\FrozenFields;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use SimpleXMLElement;
+use Tuleap\Option\Option;
 use Tuleap\Tracker\Test\Builders\Fields\FloatFieldBuilder;
 use Tuleap\Tracker\Test\Builders\Fields\IntegerFieldBuilder;
 use Tuleap\Tracker\Test\Builders\Fields\List\ListStaticValueBuilder;
@@ -129,5 +130,15 @@ XML;
 
         $this->assertInstanceOf(FrozenFields::class, $action);
         $this->assertCount(1, $action->getFieldIds());
+    }
+
+    public function testItReturnsTheFirstTransitionIdOfTheFieldUsedInThisPostAction(): void
+    {
+        $expected_transition_id = 1052;
+        $this->frozen_dao->method('searchFirstTransitionIdByFieldId')->willReturn(Option::fromValue($expected_transition_id));
+
+        $int_field = IntegerFieldBuilder::anIntField(1)->build();
+
+        $this->assertEquals(Option::fromValue($expected_transition_id), $this->frozen_fields_factory->getFirstTransitionIdWhereFieldIsUsedInPostActions($int_field));
     }
 }

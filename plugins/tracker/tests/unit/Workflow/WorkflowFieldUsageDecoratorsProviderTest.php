@@ -87,14 +87,12 @@ class WorkflowFieldUsageDecoratorsProviderTest extends TestCase
         );
     }
 
-    private static function getExpectedWorkflowActionsLabelDecorator(bool $with_transition_id): LabelDecorator
+    private static function getExpectedWorkflowActionsLabelDecorator(): LabelDecorator
     {
         return LabelDecorator::buildWithUrl(
             dgettext('tuleap-tracker', 'Workflow action'),
             dgettext('tuleap-tracker', 'This field is used by workflow actions'),
-            $with_transition_id
-                ? WorkflowUrlBuilder::buildTransitionUrlWithTransitionId(TrackerTestBuilder::aTracker()->build(), self::TRANSITION_ID)
-                : WorkflowUrlBuilder::buildTransitionsUrl(TrackerTestBuilder::aTracker()->build()),
+            WorkflowUrlBuilder::buildTransitionUrlWithTransitionId(TrackerTestBuilder::aTracker()->build(), self::TRANSITION_ID)
         );
     }
 
@@ -150,7 +148,7 @@ class WorkflowFieldUsageDecoratorsProviderTest extends TestCase
             : ProvideWorkflowConditionUsageByFieldStub::withoutWorkflowCondition();
 
         $workflow_action_usage_provider = $has_workflow_action
-            ? ProvideWorkflowActionUsageByFieldStub::withWorkflowAction()
+            ? ProvideWorkflowActionUsageByFieldStub::withWorkflowActionWithTransitionId(self::TRANSITION_ID)
             : ProvideWorkflowActionUsageByFieldStub::withoutWorkflowAction();
 
         $fieldset_workflow_action_usage_provider = $has_fieldset_workflow_action
@@ -261,7 +259,7 @@ class WorkflowFieldUsageDecoratorsProviderTest extends TestCase
             true,
             false,
             false,
-            [self::getExpectedWorkflowActionsLabelDecorator(false)],
+            [self::getExpectedWorkflowActionsLabelDecorator()],
         ];
 
         yield 'workflow actions for fieldset only' => [
@@ -273,7 +271,7 @@ class WorkflowFieldUsageDecoratorsProviderTest extends TestCase
             false,
             false,
             true,
-            [self::getExpectedWorkflowActionsLabelDecorator(true)],
+            [self::getExpectedWorkflowActionsLabelDecorator()],
         ];
 
         yield 'workflow transition only' => [
@@ -363,9 +361,9 @@ class WorkflowFieldUsageDecoratorsProviderTest extends TestCase
                 self::getExpectedTriggersLabelDecorator(),
                 self::getExpectedParentTriggersLabelDecorator(),
                 self::getExpectedWorkflowConditionsLabelDecorator(),
-                self::getExpectedWorkflowActionsLabelDecorator(false),
+                self::getExpectedWorkflowActionsLabelDecorator(),
                 self::getExpectedWorkflowTransitionsLabelDecorator(),
-                self::getExpectedWorkflowActionsLabelDecorator(true),
+                self::getExpectedWorkflowActionsLabelDecorator(),
             ],
         ];
     }
