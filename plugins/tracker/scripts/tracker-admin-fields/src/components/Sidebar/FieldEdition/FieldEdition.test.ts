@@ -17,7 +17,7 @@
  * along with Tuleap. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import FieldEdition from "./FieldEdition.vue";
 import { FIELDS, HANDLE_REMOVE_FIELD, TRACKER_ROOT } from "../../../injection-symbols";
 import type { VueWrapper } from "@vue/test-utils";
@@ -27,15 +27,21 @@ import FieldEditionBody from "./FieldEditionBody.vue";
 import NotFound from "../../NotFound.vue";
 import { createGettext } from "vue3-gettext";
 import { getRouter } from "../../../router/fields-usage-router";
+import * as rest from "@tuleap/fetch-result";
+import { uri } from "@tuleap/fetch-result";
+import { okAsync } from "neverthrow";
 
 describe("FieldEdition", () => {
-    function getWrapper(field_id: number): VueWrapper {
+    const FIELDS_USAGE_BASE_URL = "/trackers/101/fields/";
+
+    function getWrapper(field_id: number, location: Location = window.location): VueWrapper {
         return mount(FieldEdition, {
             props: {
                 field_id,
+                location,
             },
             global: {
-                plugins: [getRouter("/"), createGettext({ silent: true })],
+                plugins: [getRouter(FIELDS_USAGE_BASE_URL), createGettext({ silent: true })],
                 provide: {
                     [FIELDS.valueOf()]: [
                         {
@@ -66,5 +72,42 @@ describe("FieldEdition", () => {
 
         expect(wrapper.findComponent(NotFound).exists()).toBe(false);
         expect(wrapper.findComponent(FieldEditionBody).exists()).toBe(true);
+    });
+
+    it("should not submit anything if nothing is changed", async () => {
+        const wrapper = getWrapper(123);
+
+        const patch = vi.spyOn(rest, "patchJSON");
+
+        await wrapper.find("form").trigger("submit");
+
+        expect(patch).not.toHaveBeenCalled();
+    });
+
+    it("should submit form if something is changed", async () => {
+        const wrapper = getWrapper(123);
+
+        const patch = vi.spyOn(rest, "patchJSON");
+
+        await wrapper.find("[data-test=label]").setValue("New label");
+        await wrapper.find("form").trigger("submit");
+
+        expect(patch).toHaveBeenCalledWith(uri`/api/v1/tracker_fields/123`, {
+            label: "New label",
+        });
+    });
+
+    it(`should reload the field usage page after the PATCH
+        so that warning messages that depends on the current
+        field configuration are accurate (eg Burnup/Burndown)`, async () => {
+        const location: Location = { ...window.location, assign: vi.fn() };
+        const wrapper = getWrapper(123, location);
+
+        vi.spyOn(rest, "patchJSON").mockReturnValue(okAsync(true));
+
+        await wrapper.find("[data-test=label]").setValue("New label");
+        await wrapper.find("form").trigger("submit");
+
+        expect(location.assign).toHaveBeenCalledWith(FIELDS_USAGE_BASE_URL);
     });
 });

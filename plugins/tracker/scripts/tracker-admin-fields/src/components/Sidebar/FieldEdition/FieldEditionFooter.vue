@@ -28,12 +28,13 @@
         >
             {{ $gettext("Cancel") }}
         </button>
-        <button
-            type="button"
-            disabled
-            class="tlp-button-primary"
-            v-bind:title="$gettext('Not implemented yet')"
-        >
+        <button type="submit" class="tlp-button-primary" v-bind:disabled="is_updating">
+            <i
+                class="fa-solid fa-circle-notch fa-spin tlp-button-icon"
+                aria-hidden="true"
+                v-if="is_updating"
+            ></i>
+            <i v-else class="fa-solid fa-save tlp-button-icon" aria-hidden="true"></i>
             {{ $gettext("Save") }}
         </button>
     </div>
@@ -44,6 +45,8 @@ import { useRouter } from "vue-router";
 import { useGettext } from "vue3-gettext";
 import type { StructureFields } from "@tuleap/plugin-tracker-rest-api-types";
 import FieldRemoveOrDeleteElement from "./FieldRemoveOrDeleteElement.vue";
+import { strictInject } from "@tuleap/vue-strict-inject";
+import { IS_UPDATING } from "./type";
 
 const router = useRouter();
 const { $gettext } = useGettext();
@@ -51,6 +54,8 @@ const { $gettext } = useGettext();
 defineProps<{
     field: StructureFields;
 }>();
+
+const is_updating = strictInject(IS_UPDATING);
 </script>
 
 <style lang="scss" scoped>
