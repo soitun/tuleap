@@ -22,9 +22,13 @@ declare(strict_types=1);
 
 namespace Tuleap\Tracker\Workflow\PostAction;
 
+use Tuleap\Option\Option;
 use Tuleap\Tracker\FormElement\Container\Fieldset\FieldsetContainer;
 
 interface ProvideWorkflowActionUsageByFieldset
 {
-    public function isFieldsetUsedInWorkflowActions(FieldsetContainer $fieldset): bool;
+    /**
+     * @return Option<int>
+     */
+    public function getFirstTransitionIdWhereFieldsetIsUsedInWorkflowActions(FieldsetContainer $fieldset): Option;
 }

@@ -40,6 +40,8 @@ use Tuleap\Tracker\Test\Stub\Workflow\Trigger\ProvideTriggersUsageByFieldStub;
 #[\PHPUnit\Framework\Attributes\DisableReturnValueGenerationForTestDoubles]
 class WorkflowFieldUsageDecoratorsProviderTest extends TestCase
 {
+    private const int TRANSITION_ID = 1025;
+
     private static function getExpectedGlobalRulesLabelDecorator(): LabelDecorator
     {
         return LabelDecorator::buildWithUrl(
@@ -85,12 +87,14 @@ class WorkflowFieldUsageDecoratorsProviderTest extends TestCase
         );
     }
 
-    private static function getExpectedWorkflowActionsLabelDecorator(): LabelDecorator
+    private static function getExpectedWorkflowActionsLabelDecorator(bool $with_transition_id): LabelDecorator
     {
         return LabelDecorator::buildWithUrl(
             dgettext('tuleap-tracker', 'Workflow action'),
             dgettext('tuleap-tracker', 'This field is used by workflow actions'),
-            WorkflowUrlBuilder::buildTransitionsUrl(TrackerTestBuilder::aTracker()->build())
+            $with_transition_id
+                ? WorkflowUrlBuilder::buildTransitionUrlWithTransitionId(TrackerTestBuilder::aTracker()->build(), self::TRANSITION_ID)
+                : WorkflowUrlBuilder::buildTransitionsUrl(TrackerTestBuilder::aTracker()->build()),
         );
     }
 
@@ -150,7 +154,7 @@ class WorkflowFieldUsageDecoratorsProviderTest extends TestCase
             : ProvideWorkflowActionUsageByFieldStub::withoutWorkflowAction();
 
         $fieldset_workflow_action_usage_provider = $has_fieldset_workflow_action
-            ? ProvideWorkflowActionUsageByFieldsetStub::withWorkflowAction()
+            ? ProvideWorkflowActionUsageByFieldsetStub::withWorkflowActionWithTransitionId(self::TRANSITION_ID)
             : ProvideWorkflowActionUsageByFieldsetStub::withoutWorkflowAction();
 
         $workflow_transition_usage_provider = $has_workflow_transition
@@ -257,7 +261,7 @@ class WorkflowFieldUsageDecoratorsProviderTest extends TestCase
             true,
             false,
             false,
-            [self::getExpectedWorkflowActionsLabelDecorator()],
+            [self::getExpectedWorkflowActionsLabelDecorator(false)],
         ];
 
         yield 'workflow actions for fieldset only' => [
@@ -269,7 +273,7 @@ class WorkflowFieldUsageDecoratorsProviderTest extends TestCase
             false,
             false,
             true,
-            [self::getExpectedWorkflowActionsLabelDecorator()],
+            [self::getExpectedWorkflowActionsLabelDecorator(true)],
         ];
 
         yield 'workflow transition only' => [
@@ -359,9 +363,9 @@ class WorkflowFieldUsageDecoratorsProviderTest extends TestCase
                 self::getExpectedTriggersLabelDecorator(),
                 self::getExpectedParentTriggersLabelDecorator(),
                 self::getExpectedWorkflowConditionsLabelDecorator(),
-                self::getExpectedWorkflowActionsLabelDecorator(),
+                self::getExpectedWorkflowActionsLabelDecorator(false),
                 self::getExpectedWorkflowTransitionsLabelDecorator(),
-                self::getExpectedWorkflowActionsLabelDecorator(),
+                self::getExpectedWorkflowActionsLabelDecorator(true),
             ],
         ];
     }

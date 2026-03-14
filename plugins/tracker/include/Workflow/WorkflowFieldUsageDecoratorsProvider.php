@@ -94,12 +94,14 @@ readonly class WorkflowFieldUsageDecoratorsProvider
         );
     }
 
-    private function getWorkflowActionsLabelDecorator(TrackerFormElement $field): LabelDecorator
+    private function getWorkflowActionsLabelDecorator(TrackerFormElement $field, ?int $transition_id = null): LabelDecorator
     {
         return LabelDecorator::buildWithUrl(
             dgettext('tuleap-tracker', 'Workflow action'),
             dgettext('tuleap-tracker', 'This field is used by workflow actions'),
-            WorkflowUrlBuilder::buildTransitionsUrl($field->getTracker()),
+            $transition_id === null
+                ? WorkflowUrlBuilder::buildTransitionsUrl($field->getTracker())
+                : WorkflowUrlBuilder::buildTransitionUrlWithTransitionId($field->getTracker(), $transition_id),
         );
     }
 
@@ -154,13 +156,20 @@ readonly class WorkflowFieldUsageDecoratorsProvider
         return $decorators;
     }
 
+    /**
+     * @return LabelDecorator[]
+     */
     public function getLabelDecoratorsForFieldset(FieldsetContainer $fieldset): array
     {
         $decorators = [];
 
-        if ($this->action_usage_by_fieldset->isFieldsetUsedInWorkflowActions($fieldset)) {
-            $decorators[] = $this->getWorkflowActionsLabelDecorator($fieldset);
-        }
+        $this->action_usage_by_fieldset
+            ->getFirstTransitionIdWhereFieldsetIsUsedInWorkflowActions($fieldset)
+            ->apply(function (int $transition_id) use (&$decorators, $fieldset): array {
+                $decorators[] = $this->getWorkflowActionsLabelDecorator($fieldset, $transition_id);
+                return $decorators;
+            });
+
 
         return $decorators;
     }

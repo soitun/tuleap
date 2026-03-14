@@ -23,28 +23,29 @@ declare(strict_types=1);
 namespace Tuleap\Tracker\Test\Stub\Workflow\PostAction;
 
 use Override;
+use Tuleap\Option\Option;
 use Tuleap\Tracker\FormElement\Container\Fieldset\FieldsetContainer;
 use Tuleap\Tracker\Workflow\PostAction\ProvideWorkflowActionUsageByFieldset;
 
 final readonly class ProvideWorkflowActionUsageByFieldsetStub implements ProvideWorkflowActionUsageByFieldset
 {
-    private function __construct(private bool $has_workflow_action)
+    private function __construct(private ?int $transition_id = null)
     {
     }
 
-    public static function withWorkflowAction(): self
+    public static function withWorkflowActionWithTransitionId(int $transition_id): self
     {
-        return new self(true);
+        return new self($transition_id);
     }
 
     public static function withoutWorkflowAction(): self
     {
-        return new self(false);
+        return new self(null);
     }
 
     #[Override]
-    public function isFieldsetUsedInWorkflowActions(FieldsetContainer $fieldset): bool
+    public function getFirstTransitionIdWhereFieldsetIsUsedInWorkflowActions(FieldsetContainer $fieldset): Option
     {
-        return $this->has_workflow_action;
+        return Option::fromNullable($this->transition_id);
     }
 }

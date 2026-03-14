@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace Tuleap\Tracker\Workflow\PostAction\HiddenFieldsets;
 
 use Tuleap\DB\DataAccessObject;
+use Tuleap\Option\Option;
 
 class HiddenFieldsetsDao extends DataAccessObject
 {
@@ -66,6 +67,23 @@ class HiddenFieldsetsDao extends DataAccessObject
             WHERE plugin_tracker_workflow_postactions_hidden_fieldsets.transition_id = ?';
 
         return $this->getDB()->q($sql, $transition_id);
+    }
+
+    /**
+     * @psalm-return Option<int>
+     */
+    public function searchFirstTransitionIdByFieldsetId(int $fieldset_id): Option
+    {
+        $sql = 'SELECT transition_id
+            FROM plugin_tracker_workflow_postactions_hidden_fieldsets AS hf
+            INNER JOIN plugin_tracker_workflow_postactions_hidden_fieldsets_value AS hfv
+            ON hf.id = hfv.postaction_id
+            WHERE hfv.fieldset_id = ?
+            ORDER BY hf.transition_id
+            LIMIT 1';
+
+        $result = $this->getDB()->cell($sql, $fieldset_id);
+        return Option::fromNullable($result === false ? null : (int) $result);
     }
 
     public function isAHiddenFieldsetPostActionUsedInTracker(int $tracker_id): bool
