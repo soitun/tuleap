@@ -23,7 +23,10 @@ namespace Tuleap\TestManagement;
 use Project;
 use TrackerFactory;
 use Tuleap\TestManagement\Administration\TrackerChecker;
+use Tuleap\TestManagement\Administration\TrackerDoesntExistException;
 use Tuleap\TestManagement\Administration\TrackerHasAtLeastOneFrozenFieldsPostActionException;
+use Tuleap\TestManagement\Administration\TrackerHasAtLeastOneHiddenFieldsetsPostActionException;
+use Tuleap\TestManagement\Administration\TrackerIsDeletedException;
 use Tuleap\TestManagement\Administration\TrackerNotInProjectException;
 
 class FirstConfigCreator
@@ -61,10 +64,13 @@ class FirstConfigCreator
     }
 
     /**
-     * @throws Administration\TrackerDoesntExistException
-     * @throws Administration\TrackerHasAtLeastOneHiddenFieldsetsPostActionException
-     * @throws Administration\TrackerIsDeletedException
+     * @throws TrackerDoesntExistException
+     * @throws TrackerHasAtLeastOneHiddenFieldsetsPostActionException
+     * @throws TrackerIsDeletedException
+     * @throws MissingArtifactLinkException
      * @throws TrackerComesFromLegacyEngineException
+     * @throws TrackerDefinitionNotValidException
+     * @throws TrackerExecutionNotValidException
      * @throws TrackerHasAtLeastOneFrozenFieldsPostActionException
      * @throws TrackerNotCreatedException
      * @throws TrackerNotInProjectException

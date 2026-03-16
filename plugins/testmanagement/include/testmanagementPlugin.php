@@ -76,8 +76,6 @@ use Tuleap\TestManagement\TestManagementPluginInfo;
 use Tuleap\TestManagement\TestmanagementTrackersConfiguration;
 use Tuleap\TestManagement\TestmanagementTrackersConfigurator;
 use Tuleap\TestManagement\TestmanagementTrackersCreator;
-use Tuleap\TestManagement\TrackerComesFromLegacyEngineException;
-use Tuleap\TestManagement\TrackerNotCreatedException;
 use Tuleap\TestManagement\Type\TypeCoveredByOverrider;
 use Tuleap\TestManagement\Type\TypeCoveredByPresenter;
 use Tuleap\TestManagement\Workflow\PostActionChecker;
@@ -403,8 +401,11 @@ class testmanagementPlugin extends Plugin implements PluginWithService, \Tuleap\
                     $config_creator->createConfigForProjectFromTemplate($to_project, $from_project, $tracker_mapping);
                 }
             );
-        } catch (TrackerComesFromLegacyEngineException | TrackerNotCreatedException $exception) {
-            $logger->error('TTM configuration for project #' . $to_project->getID() . ' not duplicated.');
+        } catch (Throwable $exception) {
+            $logger->error(
+                'TTM configuration for project #' . $to_project->getID() . ' not duplicated.',
+                ['exception' => $exception],
+            );
         }
     }
 
