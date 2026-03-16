@@ -18,26 +18,41 @@
   -->
 
 <template>
-    <div class="tlp-property">
-        <label class="tlp-label">{{ $gettext("Id") }}</label>
-        <p>{{ field.field_id }}</p>
+    <div class="tlp-form-element">
+        <label class="tlp-label" for="field-label">
+            {{ $gettext("Label") }}
+            <i class="fa-solid fa-asterisk" aria-hidden="true"></i>
+        </label>
+        <input
+            type="text"
+            class="tlp-input"
+            id="field-label"
+            data-test="label"
+            required
+            v-model="label"
+        />
     </div>
-
-    <field-label v-bind:field="field" />
-
-    <field-name v-bind:field="field" />
-
-    <field-description v-bind:field="field" />
 </template>
 
 <script setup lang="ts">
 import { useGettext } from "vue3-gettext";
 import type { StructureFields } from "@tuleap/plugin-tracker-rest-api-types";
-import FieldDescription from "./Body/FieldDescription.vue";
-import FieldName from "./Body/FieldName.vue";
-import FieldLabel from "./Body/FieldLabel.vue";
+import { ref, watch } from "vue";
+import { PAYLOAD } from "../type";
+import { strictInject } from "@tuleap/vue-strict-inject";
 
 const { $gettext } = useGettext();
 
-defineProps<{ field: StructureFields }>();
+const props = defineProps<{ field: StructureFields }>();
+
+const label = ref(props.field.label);
+
+const payload = strictInject(PAYLOAD);
+
+watch(
+    () => label.value,
+    () => {
+        payload.value.label = label.value;
+    },
+);
 </script>

@@ -78,13 +78,19 @@ class TrackerFieldsResource extends AuthenticatedResource
      * </pre>
      * <br/>
      *
-     * This partial update allows user to update the label, or add new values to a simple list field (selectbox or radiobutton).
+     * This partial update allows user to update the properties of the field (label, description, ...), or add new values to a simple list field (selectbox or radiobutton).
      * <br/>
      * <br/>
-     * To update the label:
+     * Example to update the label, description, and/or name:
      * <pre>
      * {<br>
      * &nbsp;"label": "Summary"<br/>
+     * }
+     * </pre>
+     * <pre>
+     * {<br>
+     * &nbsp;"name": "summary"<br/>
+     * &nbsp;"description": ""<br/>
      * }
      * </pre>
      * <br/>

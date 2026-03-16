@@ -28,6 +28,9 @@ msgstr ""
 "Une erreur est survenue durant l'une de vos dernières actions. Veuillez "
 "rafraîchir la page pour revenir dans un état cohérent."
 
+msgid "An error occurred during the save."
+msgstr "Une erreur est survenue pendant la sauvegarde."
+
 msgid "An error occurred while retrieving the current user."
 msgstr "Une erreur est survenue lors du chargement de l'utilisateur courant."
 

@@ -18,26 +18,43 @@
   -->
 
 <template>
-    <div class="tlp-property">
-        <label class="tlp-label">{{ $gettext("Id") }}</label>
-        <p>{{ field.field_id }}</p>
+    <div class="tlp-form-element">
+        <label class="tlp-label" for="field-description">{{ $gettext("Description") }}</label>
+        <textarea
+            class="tlp-textarea"
+            id="field-description"
+            v-model="description"
+            rows="3"
+        ></textarea>
     </div>
-
-    <field-label v-bind:field="field" />
-
-    <field-name v-bind:field="field" />
-
-    <field-description v-bind:field="field" />
 </template>
 
 <script setup lang="ts">
 import { useGettext } from "vue3-gettext";
 import type { StructureFields } from "@tuleap/plugin-tracker-rest-api-types";
-import FieldDescription from "./Body/FieldDescription.vue";
-import FieldName from "./Body/FieldName.vue";
-import FieldLabel from "./Body/FieldLabel.vue";
+import { ref, watch } from "vue";
+import { PAYLOAD } from "../type";
+import { strictInject } from "@tuleap/vue-strict-inject";
 
 const { $gettext } = useGettext();
 
-defineProps<{ field: StructureFields }>();
+const props = defineProps<{ field: StructureFields }>();
+
+const description = ref(props.field.description);
+
+const payload = strictInject(PAYLOAD);
+
+watch(
+    () => description.value,
+    () => {
+        payload.value.description = description.value;
+    },
+);
 </script>
+
+<style lang="scss" scoped>
+textarea {
+    min-height: 3rem;
+    resize: vertical;
+}
+</style>
