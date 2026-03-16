@@ -1229,9 +1229,9 @@ class Tracker_Report_Renderer_Table extends Tracker_Report_Renderer implements T
                 $purifier = Codendi_HTMLPurifier::instance();
                 //extract the first results
                 $first_result = array_shift($results);
-                //loop through it
+
+                $all_rows = [];
                 foreach ($first_result as $row) { //id, f1, f2
-                    //merge the row with the other results
                     foreach ($results as $result) {
                         if ($result === false) {
                             continue;
@@ -1240,6 +1240,13 @@ class Tracker_Report_Renderer_Table extends Tracker_Report_Renderer implements T
                         $row = array_merge($row, $result->getRow());
                         //row == id, f1, f2, f3, f4...
                     }
+                    $all_rows[] = $row;
+                }
+
+                $artifact_ids = array_unique(array_map('intval', array_column($all_rows, 'id')));
+                $artifact_factory->warmUpArtifactCacheWithIds($artifact_ids);
+
+                foreach ($all_rows as $row) {
                     $html .= '<tr class="' . $additional_classname . '" data-test="tracker-report-table-results-artifact">';
 
                     $artifact_id                   = $row['id'];
