@@ -22,6 +22,7 @@ use Tuleap\NeverThrow\Err;
 use Tuleap\NeverThrow\Fault;
 use Tuleap\NeverThrow\Ok;
 use Tuleap\NeverThrow\Result;
+use Tuleap\Option\Option;
 use Tuleap\Tracker\FormElement\Field\TrackerField;
 
 /**
@@ -220,6 +221,27 @@ class Transition_PostAction_FieldFactory implements Transition_PostActionSubFact
             }
         }
         return false;
+    }
+
+    /**
+     * @return Option<int>
+     */
+    public function getFirstTransitionIdWhereFieldIsUsedInPostActions(TrackerField $field): Option
+    {
+        foreach (array_keys($this->post_actions_classes) as $shortname) {
+            /** @psalm-suppress DeprecatedMethod  */
+            $row = $this->getDao($shortname)->searchByFieldId($field->getId())->getRow();
+            if (! $row) {
+                return Option::nothing(\Psl\Type\int());
+            }
+
+            $transition_id = $row['transition_id'];
+            if ($transition_id !== null) {
+                return Option::fromValue((int) $transition_id);
+            }
+        }
+
+        return Option::nothing(\Psl\Type\int());
     }
 
     /**

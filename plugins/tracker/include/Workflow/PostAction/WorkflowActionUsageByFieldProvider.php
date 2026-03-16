@@ -24,6 +24,7 @@ namespace Tuleap\Tracker\Workflow\PostAction;
 
 use Override;
 use Transition_PostActionFactory;
+use Tuleap\Option\Option;
 use Tuleap\Tracker\FormElement\Field\TrackerField;
 
 final readonly class WorkflowActionUsageByFieldProvider implements ProvideWorkflowActionUsageByField
@@ -32,9 +33,12 @@ final readonly class WorkflowActionUsageByFieldProvider implements ProvideWorkfl
     {
     }
 
+    /**
+     * @return Option<int>
+     */
     #[Override]
-    public function isFieldUsedInWorkflowActions(TrackerField $field): bool
+    public function getFirstTransitionIdWhereFieldIsUsedInWorkflowActions(TrackerField $field): Option
     {
-        return $this->post_action_factory->isFieldUsedInPostActions($field);
+        return $this->post_action_factory->getFirstTransitionIdWhereFieldIsUsedInPostActions($field);
     }
 }

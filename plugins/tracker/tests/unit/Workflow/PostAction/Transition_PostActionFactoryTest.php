@@ -266,6 +266,50 @@ final class Transition_PostActionFactoryTest extends \Tuleap\Test\PHPUnit\TestCa
         );
     }
 
+    public function testItReturnsNullWhenFieldIsNotUsedInPostActions(): void
+    {
+        $field = $this->createMock(\Tuleap\Tracker\FormElement\Field\TrackerField::class);
+
+        $this->field_factory->method('getFirstTransitionIdWhereFieldIsUsedInPostActions')->with($field)->willReturn(\Tuleap\Option\Option::fromNullable(null));
+
+        $this->frozen_fields_factory
+            ->method('getFirstTransitionIdWhereFieldIsUsedInPostActions')
+            ->with($field)
+            ->willReturn(\Tuleap\Option\Option::fromNullable(null));
+
+        $this->assertEquals(\Tuleap\Option\Option::fromNullable(null), $this->factory->getFirstTransitionIdWhereFieldIsUsedInPostActions($field));
+    }
+
+    public function testItReturnsTheFirstTransitionIdWhereFieldIsUsedInFrozenPostActions(): void
+    {
+        $expected_transition_id = 1032;
+
+        $field = $this->createMock(\Tuleap\Tracker\FormElement\Field\TrackerField::class);
+
+        $this->field_factory->method('getFirstTransitionIdWhereFieldIsUsedInPostActions')->with($field)->willReturn(\Tuleap\Option\Option::fromNullable(null));
+
+        $this->frozen_fields_factory
+            ->method('getFirstTransitionIdWhereFieldIsUsedInPostActions')
+            ->with($field)
+            ->willReturn(\Tuleap\Option\Option::fromValue($expected_transition_id));
+
+        $this->assertEquals(\Tuleap\Option\Option::fromValue($expected_transition_id), $this->factory->getFirstTransitionIdWhereFieldIsUsedInPostActions($field));
+    }
+
+    public function testItReturnsTheFirstTransitionIdWhereFieldIsUsedInPostActions(): void
+    {
+        $expected_transition_id = 1032;
+
+        $field = $this->createMock(\Tuleap\Tracker\FormElement\Field\TrackerField::class);
+
+        $this->field_factory
+            ->method('getFirstTransitionIdWhereFieldIsUsedInPostActions')
+            ->with($field)
+            ->willReturn(\Tuleap\Option\Option::fromValue($expected_transition_id));
+
+        $this->assertEquals(\Tuleap\Option\Option::fromValue($expected_transition_id), $this->factory->getFirstTransitionIdWhereFieldIsUsedInPostActions($field));
+    }
+
     public function testItLoadsPostActionFromAllSubFactories(): void
     {
         $this->cibuild_factory->expects($this->once())->method('loadPostActions')->with($this->transition)->willReturn([$this->post_action_1]);

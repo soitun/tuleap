@@ -22,9 +22,13 @@ declare(strict_types=1);
 
 namespace Tuleap\Tracker\Workflow\PostAction;
 
+use Tuleap\Option\Option;
 use Tuleap\Tracker\FormElement\Field\TrackerField;
 
 interface ProvideWorkflowActionUsageByField
 {
-    public function isFieldUsedInWorkflowActions(TrackerField $field): bool;
+    /**
+     * @return Option<int>
+     */
+    public function getFirstTransitionIdWhereFieldIsUsedInWorkflowActions(TrackerField $field): Option;
 }

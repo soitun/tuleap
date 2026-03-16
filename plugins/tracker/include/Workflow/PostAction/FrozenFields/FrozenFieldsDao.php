@@ -24,6 +24,7 @@ namespace Tuleap\Tracker\Workflow\PostAction\FrozenFields;
 
 use Tuleap\DB\DataAccessObject;
 use Tuleap\Tracker\FormElement\Field\ArtifactLink\ArtifactLinkField;
+use Tuleap\Option\Option;
 
 class FrozenFieldsDao extends DataAccessObject
 {
@@ -65,6 +66,23 @@ class FrozenFieldsDao extends DataAccessObject
             WHERE paro.transition_id = ?';
 
         return $this->getDB()->q($sql, $transition_id);
+    }
+
+    /**
+     * @return Option<int>
+     */
+    public function searchFirstTransitionIdByFieldId(int $field_id): Option
+    {
+        $sql = 'SELECT transition_id
+            FROM plugin_tracker_workflow_postactions_frozen_fields AS ff
+            INNER JOIN plugin_tracker_workflow_postactions_frozen_fields_value AS ffv
+            ON ff.id = ffv.postaction_id
+            WHERE ffv.field_id = ?
+            ORDER BY transition_id
+            LIMIT 1;';
+
+        $result = $this->getDB()->cell($sql, $field_id);
+        return Option::fromNullable($result === false ? null : (int) $result);
     }
 
     public function isAFrozenFieldPostActionUsedInTracker(int $tracker_id): bool
