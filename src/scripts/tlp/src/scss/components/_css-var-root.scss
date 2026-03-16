@@ -519,11 +519,12 @@ $fade-background-color: color.mix($tlp-background-color, common.$tlp-white-color
     --tlp-card-shadow: 0 3px 4px #{color.adjust($tlp-dark-color, $alpha: - 0.97)},
         0 1px 0 #{color.adjust($tlp-neutral-normal-color, $alpha: - 0.25)},
         0 0 0 1px #{color.adjust($tlp-dark-color, $alpha: - 0.95)};
-    --tlp-sticky-header-shadow: light-dark(
-        0 2px 3px var(--tlp-dark-color-transparent-90),
-        0 2px 3px var(--tlp-dark-color-lighter-10)
+    --tlp-sticky-shadow-color: light-dark(
+        var(--tlp-dark-color-transparent-90),
+        var(--tlp-dark-color-lighter-10)
     );
-    --tlp-sticky-footer-shadow: 0 -2px 3px var(--tlp-dark-color-transparent-90);
+    --tlp-sticky-header-shadow: 0 2px 3px var(--tlp-sticky-shadow-color);
+    --tlp-sticky-footer-shadow: 0 -2px 3px var(--tlp-sticky-shadow-color);
     --tlp-button-shadow: 0 1px 2px rgb(0 0 0 / 8%), 0 1px 2px rgb(0 0 0 / 10%),
         0 -0.5px 0 rgb(0 0 0 / 3%);
     --tlp-button-shadow-hover: 0 1px 1px rgb(0 0 0 / 8%), 0 0 1px rgb(0 0 0 / 8%),
