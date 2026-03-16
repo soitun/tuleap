@@ -22,26 +22,19 @@ namespace Tuleap\AgileDashboard\FormElement;
 
 use PFUser;
 use Tracker_FormElementFactory;
+use Tuleap\AgileDashboard\AgileDashboard\FormElement\RetrieveBurnupField;
+use Tuleap\Tracker\Tracker;
 
-class BurnupFieldRetriever
+final readonly class BurnupFieldRetriever implements RetrieveBurnupField
 {
-    /**
-     * @var Tracker_FormElementFactory
-     */
-    private $factory;
-
-    public function __construct(Tracker_FormElementFactory $factory)
+    public function __construct(private Tracker_FormElementFactory $factory)
     {
-        $this->factory = $factory;
     }
 
-    /**
-     * @return Burnup|null
-     */
-    public function getField(\Tuleap\Tracker\Artifact\Artifact $artifact, PFUser $user)
+    #[\Override]
+    public function getField(Tracker $tracker, PFUser $user): ?Burnup
     {
-        $burnup_fields = $this->factory->getUsedFormElementsByType($artifact->getTracker(), [Burnup::TYPE]);
-
+        $burnup_fields = $this->factory->getUsedFormElementsByType($tracker, [Burnup::TYPE]);
         if (count($burnup_fields) > 0 && $burnup_fields[0]->userCanRead($user)) {
             return $burnup_fields[0];
         }

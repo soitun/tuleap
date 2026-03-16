@@ -1,5 +1,4 @@
-<?php
-/**
+/*
  * Copyright (c) Enalean, 2023 - present. All Rights Reserved.
  *
  * This file is a part of Tuleap.
@@ -18,38 +17,23 @@
  * along with Tuleap. If not, see <http://www.gnu.org/licenses/>.
  */
 
-declare(strict_types=1);
+import { vite } from "@tuleap/build-system-configurator";
+import POGettextPlugin from "@tuleap/po-gettext-plugin";
+import * as path from "node:path";
 
-namespace Tuleap\AgileDashboard\Test\Builders;
-
-use Tuleap\AgileDashboard\FormElement\Burnup;
-
-final class BurnupTestBuilder
-{
-    public function __construct(private int $id)
+export default vite.defineAppConfig(
     {
-    }
-
-    public static function aBurnupField(int $id): self
+        plugin_name: path.basename(path.resolve(__dirname, "../..")),
+        sub_app_name: path.basename(__dirname),
+    },
     {
-        return new self($id);
-    }
-
-    public function build(): Burnup
-    {
-        return new Burnup(
-            $this->id,
-            102,
-            null,
-            'burnup',
-            'A burnup',
-            'Progression of closed elements',
-            true,
-            null,
-            null,
-            null,
-            null,
-            null
-        );
-    }
-}
+        plugins: [POGettextPlugin.vite()],
+        build: {
+            rollupOptions: {
+                input: {
+                    "agiledashboard-tracker-admin-fields": path.resolve(__dirname, "src/index.ts"),
+                },
+            },
+        },
+    },
+);

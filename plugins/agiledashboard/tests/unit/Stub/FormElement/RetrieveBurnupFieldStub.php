@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) Enalean, 2023 - present. All Rights Reserved.
+ * Copyright (c) Enalean, 2026 - present. All Rights Reserved.
  *
  * This file is a part of Tuleap.
  *
@@ -20,36 +20,36 @@
 
 declare(strict_types=1);
 
-namespace Tuleap\AgileDashboard\Test\Builders;
+namespace Tuleap\AgileDashboard\Stub\FormElement;
 
+use PFUser;
+use Tuleap\AgileDashboard\AgileDashboard\FormElement\RetrieveBurnupField;
 use Tuleap\AgileDashboard\FormElement\Burnup;
+use Tuleap\Tracker\Tracker;
 
-final class BurnupTestBuilder
+final class RetrieveBurnupFieldStub implements RetrieveBurnupField
 {
-    public function __construct(private int $id)
+    /**
+     * @param array<int, Burnup> $burnups
+     */
+    private function __construct(private array $burnups)
     {
     }
 
-    public static function aBurnupField(int $id): self
+    public static function build(): self
     {
-        return new self($id);
+        return new self([]);
     }
 
-    public function build(): Burnup
+    public function withBurnupFieldForTracker(Tracker $tracker, Burnup $burnup): self
     {
-        return new Burnup(
-            $this->id,
-            102,
-            null,
-            'burnup',
-            'A burnup',
-            'Progression of closed elements',
-            true,
-            null,
-            null,
-            null,
-            null,
-            null
-        );
+        $this->burnups[$tracker->getId()] = $burnup;
+        return $this;
+    }
+
+    #[\Override]
+    public function getField(Tracker $tracker, PFUser $user): ?Burnup
+    {
+        return $this->burnups[$tracker->getId()] ?? null;
     }
 }

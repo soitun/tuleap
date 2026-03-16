@@ -49,6 +49,7 @@ use Tuleap\AgileDashboard\FormElement\Burnup;
 use Tuleap\AgileDashboard\FormElement\Burnup\Calculator\BurnupEffortCalculatorForArtifact;
 use Tuleap\AgileDashboard\FormElement\Burnup\Calculator\SystemEvent\SystemEvent_BURNUP_DAILY;
 use Tuleap\AgileDashboard\FormElement\Burnup\Calculator\SystemEvent\SystemEvent_BURNUP_GENERATE;
+use Tuleap\AgileDashboard\FormElement\Burnup\Configuration\BurnupConfigurationWarningsCollector;
 use Tuleap\AgileDashboard\FormElement\Burnup\Count\CountElementsCacheDao;
 use Tuleap\AgileDashboard\FormElement\Burnup\Count\CountElementsCalculator;
 use Tuleap\AgileDashboard\FormElement\Burnup\Count\ProjectsCountModeDao;
@@ -112,6 +113,7 @@ use Tuleap\Layout\CssViteAsset;
 use Tuleap\Layout\Feedback\FeedbackSerializer;
 use Tuleap\Layout\HomePage\StatisticsCollectionCollector;
 use Tuleap\Layout\IncludeViteAssets;
+use Tuleap\Layout\JavascriptViteAsset;
 use Tuleap\Layout\ThemeVariantColor;
 use Tuleap\Layout\ThemeVariation;
 use Tuleap\Plugin\ListeningToEventClass;
@@ -161,6 +163,10 @@ use Tuleap\Tracker\CreateTrackerFromXMLEvent;
 use Tuleap\Tracker\Creation\JiraImporter\Import\JiraImporterExternalPluginsEvent;
 use Tuleap\Tracker\Events\CollectTrackerDependantServices;
 use Tuleap\Tracker\FormElement\Event\ExternalTrackerChartConfigurationWarningMessage;
+use Tuleap\Tracker\FormElement\Admin\CollectFieldsConfigurationWarningsEvent;
+use Tuleap\Tracker\FormElement\Admin\ExternalTrackerAdminFieldEvent;
+use Tuleap\Tracker\FormElement\ChartConfigurationFieldRetriever;
+use Tuleap\Tracker\FormElement\ChartMessageFetcher;
 use Tuleap\Tracker\FormElement\Field\Priority\PriorityField;
 use Tuleap\Tracker\FormElement\Field\TrackerField;
 use Tuleap\Tracker\FormElement\View\Admin\FilterFormElementsThatCanBeCreatedForTracker;
@@ -1932,5 +1938,38 @@ class AgileDashboardPlugin extends Plugin implements PluginWithConfigKeys, Plugi
         if (new PlanningDao()->searchByMilestoneTrackerId($event->getTracker()->getId()) === null) {
             $event->removeByType(Burnup::TYPE);
         }
+    }
+
+    #[ListeningToEventClass]
+    public function collectTrackerFieldConfigurationWarnings(CollectFieldsConfigurationWarningsEvent $event): void
+    {
+        $form_element_factory = Tracker_FormElementFactory::instance();
+        new BurnupConfigurationWarningsCollector(
+            new BurnupFieldRetriever($form_element_factory),
+            new ChartMessageFetcher(
+                Tracker_HierarchyFactory::instance(),
+                new ChartConfigurationFieldRetriever(
+                    $form_element_factory,
+                    SemanticTimeframeBuilder::build(),
+                    $this->getBackendLogger(),
+                ),
+                EventManager::instance(),
+                UserManager::instance()
+            )
+        )->collectBurnupConfigurationWarnings($event);
+    }
+
+    #[ListeningToEventClass]
+    public function getTrackerAdminFieldAssets(ExternalTrackerAdminFieldEvent $event): void
+    {
+        $event->addViteAssets(
+            new JavascriptViteAsset(
+                new IncludeViteAssets(
+                    __DIR__ . '/../scripts/tracker-admin-fields/frontend-assets',
+                    '/assets/agiledashboard/tracker-admin-fields'
+                ),
+                'src/index.ts'
+            )
+        );
     }
 }

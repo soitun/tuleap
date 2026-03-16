@@ -1911,6 +1911,7 @@ class trackerPlugin extends Plugin implements PluginWithConfigKeys, PluginWithSe
                     $event_manager,
                     UserManager::instance()
                 ),
+                $event_manager,
             ),
             new IncludeViteAssets(__DIR__ . '/../../../src/scripts/ckeditor4/frontend-assets/', '/assets/core/ckeditor4/'),
             $event_manager,

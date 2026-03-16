@@ -1,5 +1,4 @@
-<?php
-/**
+/*
  * Copyright (c) Enalean, 2023 - present. All Rights Reserved.
  *
  * This file is a part of Tuleap.
@@ -18,38 +17,14 @@
  * along with Tuleap. If not, see <http://www.gnu.org/licenses/>.
  */
 
-declare(strict_types=1);
+import {
+    getLocaleWithDefault,
+    initGettext,
+    getPOFileFromLocaleWithoutExtension,
+} from "@tuleap/gettext";
 
-namespace Tuleap\AgileDashboard\Test\Builders;
-
-use Tuleap\AgileDashboard\FormElement\Burnup;
-
-final class BurnupTestBuilder
-{
-    public function __construct(private int $id)
-    {
-    }
-
-    public static function aBurnupField(int $id): self
-    {
-        return new self($id);
-    }
-
-    public function build(): Burnup
-    {
-        return new Burnup(
-            $this->id,
-            102,
-            null,
-            'burnup',
-            'A burnup',
-            'Progression of closed elements',
-            true,
-            null,
-            null,
-            null,
-            null,
-            null
-        );
-    }
-}
+export const gettext_provider = await initGettext(
+    getLocaleWithDefault(document),
+    "plugin-agiledashboard/tracker-admin-fields",
+    (locale) => import(`../po/${getPOFileFromLocaleWithoutExtension(locale)}.po`),
+);
