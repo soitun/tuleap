@@ -168,7 +168,7 @@ $fade-background-color: color.mix($tlp-background-color, common.$tlp-white-color
     --tlp-main-color-lighter-85: #{color.mix($tlp-main-color, common.$tlp-white-color, 15%)};
     --tlp-main-color-lighter-90: light-dark(
         #{color.mix($tlp-main-color, common.$tlp-white-color, 10%)},
-        #{color.mix($tlp-main-color, $tlp-dark-color, 10%)}
+        #{color.mix($tlp-main-color, $tlp-dark-color, 20%)}
     );
     --tlp-main-color-transparent-15: #{color.adjust($tlp-main-color, $alpha: - 0.15)};
     --tlp-main-color-transparent-20: #{color.adjust($tlp-main-color, $alpha: - 0.2)};
@@ -188,8 +188,14 @@ $fade-background-color: color.mix($tlp-background-color, common.$tlp-white-color
     --tlp-info-color-lighter-30: #{color.mix($tlp-info-color, common.$tlp-white-color, 70%)};
     --tlp-info-color-lighter-60: #{color.mix($tlp-info-color, common.$tlp-white-color, 40%)};
     --tlp-info-color-lighter-35: #{color.mix($tlp-info-color, common.$tlp-white-color, 65%)};
-    --tlp-info-color-lighter-80: #{color.mix($tlp-info-color, common.$tlp-white-color, 20%)};
-    --tlp-info-color-lighter-90: #{color.mix($tlp-info-color, common.$tlp-white-color, 10%)};
+    --tlp-info-color-lighter-80: light-dark(
+        #{color.mix($tlp-info-color, common.$tlp-white-color, 20%)},
+        #{color.mix($tlp-info-color, $tlp-dark-color, 30%)}
+    );
+    --tlp-info-color-lighter-90: light-dark(
+        #{color.mix($tlp-info-color, common.$tlp-white-color, 10%)},
+        #{color.mix($tlp-info-color, $tlp-dark-color, 20%)}
+    );
     --tlp-info-color-transparent-40: #{color.adjust($tlp-info-color, $alpha: - 0.4)};
     --tlp-info-color-transparent-50: #{color.adjust($tlp-info-color, $alpha: - 0.5)};
     --tlp-info-color-transparent-80: #{color.adjust($tlp-info-color, $alpha: - 0.8)};
@@ -205,8 +211,14 @@ $fade-background-color: color.mix($tlp-background-color, common.$tlp-white-color
     --tlp-warning-color-lighter-15: #{color.mix($tlp-warning-color, common.$tlp-white-color, 85%)};
     --tlp-warning-color-lighter-20: #{color.mix($tlp-warning-color, common.$tlp-white-color, 80%)};
     --tlp-warning-color-lighter-30: #{color.mix($tlp-warning-color, common.$tlp-white-color, 70%)};
-    --tlp-warning-color-lighter-80: #{color.mix($tlp-warning-color, common.$tlp-white-color, 20%)};
-    --tlp-warning-color-lighter-90: #{color.mix($tlp-warning-color, common.$tlp-white-color, 10%)};
+    --tlp-warning-color-lighter-80: light-dark(
+        #{color.mix($tlp-warning-color, common.$tlp-white-color, 20%)},
+        #{color.mix($tlp-warning-color, $tlp-dark-color, 30%)}
+    );
+    --tlp-warning-color-lighter-90: light-dark(
+        #{color.mix($tlp-warning-color, common.$tlp-white-color, 10%)},
+        #{color.mix($tlp-warning-color, $tlp-dark-color, 20%)}
+    );
     --tlp-warning-color-transparent-40: #{color.adjust($tlp-warning-color, $alpha: - 0.4)};
     --tlp-warning-color-transparent-50: #{color.adjust($tlp-warning-color, $alpha: - 0.5)};
     --tlp-warning-color-transparent-60: #{color.adjust($tlp-warning-color, $alpha: - 0.6)};
@@ -222,8 +234,14 @@ $fade-background-color: color.mix($tlp-background-color, common.$tlp-white-color
     --tlp-danger-color-lighter-30: #{color.mix($tlp-danger-color, common.$tlp-white-color, 70%)};
     --tlp-danger-color-lighter-40: #{color.mix($tlp-danger-color, common.$tlp-white-color, 60%)};
     --tlp-danger-color-lighter-60: #{color.mix($tlp-danger-color, common.$tlp-white-color, 40%)};
-    --tlp-danger-color-lighter-80: #{color.mix($tlp-danger-color, common.$tlp-white-color, 20%)};
-    --tlp-danger-color-lighter-90: #{color.mix($tlp-danger-color, common.$tlp-white-color, 10%)};
+    --tlp-danger-color-lighter-80: light-dark(
+        #{color.mix($tlp-danger-color, common.$tlp-white-color, 20%)},
+        #{color.mix($tlp-danger-color, $tlp-dark-color, 30%)}
+    );
+    --tlp-danger-color-lighter-90: light-dark(
+        #{color.mix($tlp-danger-color, common.$tlp-white-color, 10%)},
+        #{color.mix($tlp-danger-color, $tlp-dark-color, 20%)}
+    );
     --tlp-danger-color-transparent-15: #{color.adjust($tlp-danger-color, $alpha: - 0.15)};
     --tlp-danger-color-transparent-40: #{color.adjust($tlp-danger-color, $alpha: - 0.4)};
     --tlp-danger-color-transparent-50: #{color.adjust($tlp-danger-color, $alpha: - 0.5)};
@@ -241,8 +259,14 @@ $fade-background-color: color.mix($tlp-background-color, common.$tlp-white-color
     --tlp-success-color-lighter-30: #{color.mix($tlp-success-color, common.$tlp-white-color, 70%)};
     --tlp-success-color-lighter-35: #{color.mix($tlp-success-color, common.$tlp-white-color, 65%)};
     --tlp-success-color-lighter-60: #{color.mix($tlp-success-color, common.$tlp-white-color, 40%)};
-    --tlp-success-color-lighter-80: #{color.mix($tlp-success-color, common.$tlp-white-color, 20%)};
-    --tlp-success-color-lighter-90: #{color.mix($tlp-success-color, common.$tlp-white-color, 10%)};
+    --tlp-success-color-lighter-80: light-dark(
+        #{color.mix($tlp-success-color, common.$tlp-white-color, 20%)},
+        #{color.mix($tlp-success-color, $tlp-dark-color, 30%)}
+    );
+    --tlp-success-color-lighter-90: light-dark(
+        #{color.mix($tlp-success-color, common.$tlp-white-color, 10%)},
+        #{color.mix($tlp-success-color, $tlp-dark-color, 20%)}
+    );
     --tlp-success-color-transparent-40: #{color.adjust($tlp-success-color, $alpha: - 0.4)};
     --tlp-success-color-transparent-50: #{color.adjust($tlp-success-color, $alpha: - 0.5)};
     --tlp-success-color-transparent-85: #{color.adjust($tlp-success-color, $alpha: - 0.85)};
@@ -346,6 +370,10 @@ $fade-background-color: color.mix($tlp-background-color, common.$tlp-white-color
 
     // Structures
     --tlp-structure-background-color: light-dark(var(--tlp-white-color), var(--tlp-dark-color));
+    --tlp-structure-button-background-color: light-dark(
+        var(--tlp-white-color),
+        var(--tlp-dark-color-lighter-10)
+    );
 
     // Dark
     --tlp-danger-color-on-dark-background: #{color.mix(
