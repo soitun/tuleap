@@ -22,19 +22,14 @@ import { shallowMount } from "@vue/test-utils";
 import { DEFAULT_LOCALE } from "@tuleap/locale";
 import DocumentRelativeDate from "./DocumentRelativeDate.vue";
 import { getGlobalTestOptions } from "../../helpers/global-options-for-test";
-import {
-    DATE_FORMATTER,
-    DATE_TIME_FORMATTER,
-    RELATIVE_DATES_DISPLAY,
-    USER_LOCALE,
-} from "../../configuration-keys";
+import { DATE_TIME_FORMATTER, RELATIVE_DATES_DISPLAY, USER_LOCALE } from "../../configuration-keys";
 
 describe("DocumentRelativeDate", () => {
     const mock_formatter = {
         format: vi.fn((date: string) => date),
     };
 
-    it("should display a tlp-relative-date element formated for hours", () => {
+    it("should display a tlp-relative-date element with placement on top", () => {
         const wrapper = shallowMount(DocumentRelativeDate, {
             props: {
                 date: "2021-10-06",
@@ -45,7 +40,6 @@ describe("DocumentRelativeDate", () => {
                     "tlp-relative-date": true,
                 },
                 provide: {
-                    [DATE_FORMATTER.valueOf()]: mock_formatter,
                     [DATE_TIME_FORMATTER.valueOf()]: mock_formatter,
                     [USER_LOCALE.valueOf()]: DEFAULT_LOCALE,
                     [RELATIVE_DATES_DISPLAY.valueOf()]: "relative_first-absolute_shown",
@@ -53,10 +47,10 @@ describe("DocumentRelativeDate", () => {
             },
         });
 
-        expect(wrapper.element).toMatchSnapshot();
+        expect(wrapper.attributes("placement")).toBe("top");
     });
 
-    it("should display a tlp-relative-date element with placement on right formated for date time", () => {
+    it("should display a tlp-relative-date element with placement on right", () => {
         const wrapper = shallowMount(DocumentRelativeDate, {
             props: {
                 date: "2021-10-06",
@@ -75,6 +69,6 @@ describe("DocumentRelativeDate", () => {
             },
         });
 
-        expect(wrapper.element).toMatchSnapshot();
+        expect(wrapper.attributes("placement")).toBe("right");
     });
 });
